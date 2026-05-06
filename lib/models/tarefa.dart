@@ -1,18 +1,28 @@
 import 'package:app_de_tarefas/models/model.dart';
 
 class Tarefa implements Model {
+  static const categorias = [
+    'Pessoal',
+    'Trabalho',
+    'Estudos',
+    'Saúde',
+    'Outros',
+  ];
+
   int? _id;
   String titulo;
   String descricao;
   DateTime dataPrevista;
   bool importante;
   bool realizada;
+  String categoria;
   int ordem;
 
   Tarefa({
     required this.titulo,
     required this.descricao,
     required this.dataPrevista,
+    this.categoria = 'Outros',
     this.importante = false,
     this.realizada = false,
     this.ordem = 0,
@@ -45,6 +55,7 @@ class Tarefa implements Model {
       'dataPrevista': dataPrevista.toIso8601String(),
       'importante': importante ? 1 : 0,
       'realizada': realizada ? 1 : 0,
+      'categoria': categoria,
       'ordem': ordem,
     };
   }
@@ -54,6 +65,7 @@ class Tarefa implements Model {
       titulo: map['titulo'] as String,
       descricao: map['descricao'] as String,
       dataPrevista: DateTime.parse(map['dataPrevista'] as String),
+      categoria: map['categoria'] as String,
       importante: map['importante'] == 1,
       realizada: map['realizada'] == 1,
       ordem: map['ordem'] as int,

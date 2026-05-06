@@ -9,21 +9,28 @@ class DBUtil {
 
     return sqlite.openDatabase(
       arqBD,
-      version: 1,
-      onCreate: (db, version) {
-        db.execute('''
-          CREATE TABLE Tarefa(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT NOT NULL,
-            descricao TEXT NOT NULL,
-            dataPrevista TEXT NOT NULL,
-            importante INTEGER NOT NULL,
-            realizada INTEGER NOT NULL,
-            ordem INTEGER NOT NULL
-          )
-        ''');
+      version: 2,
+      onCreate: (db, version) => _criaTabela(db),
+      onUpgrade: (db, oldVersion, newVersion) async {
+        await db.execute('DROP TABLE IF EXISTS Tarefa');
+        await _criaTabela(db);
       },
     );
+  }
+
+  static Future<void> _criaTabela(sqlite.Database db) async {
+    await db.execute('''
+      CREATE TABLE Tarefa(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL,
+        descricao TEXT NOT NULL,
+        dataPrevista TEXT NOT NULL,
+        importante INTEGER NOT NULL,
+        realizada INTEGER NOT NULL,
+        categoria TEXT NOT NULL,
+        ordem INTEGER NOT NULL
+      )
+    ''');
   }
 
   static Future<void> insert(Model model) async {
