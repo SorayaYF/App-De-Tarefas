@@ -95,7 +95,7 @@ class _TelaFormState extends State<TelaForm> {
   }
 
   Widget _label(String texto) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.only(bottom: 8),
         child: Text(
           texto,
           style: const TextStyle(
@@ -105,6 +105,45 @@ class _TelaFormState extends State<TelaForm> {
           ),
         ),
       );
+
+  Widget _chipCategoria(String c) {
+    final selecionada = c == _categoria;
+    final cor = Categorias.cor(c);
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () => setState(() => _categoria = c),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: selecionada ? cor.withValues(alpha: 0.12) : Colors.white,
+          border: Border.all(
+            color: selecionada ? cor : const Color(0xFFE5E7EB),
+            width: selecionada ? 1.5 : 1,
+          ),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(color: cor, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              c,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: selecionada ? cor : const Color(0xFF374151),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +157,7 @@ class _TelaFormState extends State<TelaForm> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -129,7 +168,7 @@ class _TelaFormState extends State<TelaForm> {
                 hintText: 'Ex: Estudar Flutter',
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             _label('Descrição'),
             TextField(
               controller: _descricaoController,
@@ -138,32 +177,15 @@ class _TelaFormState extends State<TelaForm> {
                 hintText: 'Detalhes da tarefa',
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             _label('Categoria'),
-            DropdownButtonFormField<String>(
-              value: _categoria,
-              items: Tarefa.categorias
-                  .map((c) => DropdownMenuItem(
-                        value: c,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Categorias.cor(c),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(c),
-                          ],
-                        ),
-                      ))
-                  .toList(),
-              onChanged: (v) => setState(() => _categoria = v ?? 'Outros'),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children:
+                  Tarefa.categorias.map((c) => _chipCategoria(c)).toList(),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             _label('Data prevista'),
             InkWell(
               onTap: _selecionaData,
@@ -181,7 +203,7 @@ class _TelaFormState extends State<TelaForm> {
                     const Icon(
                       Icons.calendar_today_outlined,
                       size: 18,
-                      color: Color(0xFF6B7280),
+                      color: Color(0xFF2563EB),
                     ),
                     const SizedBox(width: 10),
                     Text(
@@ -192,44 +214,74 @@ class _TelaFormState extends State<TelaForm> {
                       ),
                     ),
                     const Spacer(),
-                    const Text(
-                      'Alterar',
-                      style: TextStyle(
-                        color: Color(0xFF2563EB),
-                        fontWeight: FontWeight.w600,
-                      ),
+                    const Icon(
+                      Icons.chevron_right,
+                      color: Color(0xFF9CA3AF),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: const Color(0xFFE5E7EB)),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: SwitchListTile(
-                title: const Text(
-                  'Marcar como importante',
-                  style: TextStyle(fontSize: 15),
-                ),
-                value: _importante,
-                activeColor: const Color(0xFF2563EB),
-                onChanged: (v) => setState(() => _importante = v),
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: BotaoAcao(
-                icone: Icons.check,
-                texto: editando ? 'Salvar alterações' : 'Adicionar tarefa',
-                aoPressionar: _salva,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.star_outline_rounded,
+                    color: Color(0xFFF59E0B),
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Marcar como importante',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                        Text(
+                          'Destaca a tarefa na lista',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    value: _importante,
+                    activeColor: const Color(0xFF2563EB),
+                    onChanged: (v) => setState(() => _importante = v),
+                  ),
+                ],
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: double.infinity,
+            child: BotaoAcao(
+              icone: Icons.check_rounded,
+              texto: editando ? 'Salvar alterações' : 'Adicionar tarefa',
+              aoPressionar: _salva,
+            ),
+          ),
         ),
       ),
     );
